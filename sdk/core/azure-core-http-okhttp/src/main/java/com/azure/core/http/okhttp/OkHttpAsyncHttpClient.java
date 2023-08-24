@@ -47,7 +47,7 @@ class OkHttpAsyncHttpClient implements HttpClient {
 
     private static final ClientLogger LOGGER = new ClientLogger(OkHttpAsyncHttpClient.class);
     private static final byte[] EMPTY_BODY = new byte[0];
-    private static final RequestBody EMPTY_REQUEST_BODY = RequestBody.create(EMPTY_BODY);
+    private static final RequestBody EMPTY_REQUEST_BODY = RequestBody.create(MediaType.parse(""), EMPTY_BODY);
 
     private static final String AZURE_EAGERLY_READ_RESPONSE = "azure-eagerly-read-response";
     private static final String AZURE_IGNORE_RESPONSE_BODY = "azure-ignore-response-body";
@@ -170,7 +170,7 @@ class OkHttpAsyncHttpClient implements HttpClient {
         if (content instanceof ByteArrayContent
             || content instanceof StringContent
             || content instanceof SerializableContent) {
-            return RequestBody.create(content.toBytes(), mediaType);
+            return RequestBody.create(mediaType, content.toBytes());
         } else {
             long effectiveContentLength = getRequestContentLength(content, headers);
             if (content instanceof InputStreamContent) {

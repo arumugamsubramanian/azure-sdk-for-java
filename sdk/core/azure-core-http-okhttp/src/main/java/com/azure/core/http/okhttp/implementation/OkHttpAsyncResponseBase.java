@@ -12,6 +12,8 @@ import okhttp3.Response;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base response class for OkHttp with implementations for response metadata.
@@ -74,7 +76,17 @@ abstract class OkHttpAsyncResponseBase extends HttpResponse {
         // will iterate over the internal array of header values for each name. With the new approach use azure-core
         // HttpHeaders add method.
         // Overall, this is much better performing as almost all headers will have a single value.
-        okHttpHeaders.forEach(nameValuePair -> azureHeaders.add(nameValuePair.getFirst(), nameValuePair.getSecond()));
+
+        List<String> headerNames = new ArrayList<>(okHttpHeaders.names());
+//                (List<String>) okHttpHeaders.names();
+
+        headerNames.forEach(headerName -> {
+            String headerValue = okHttpHeaders.get(headerName);
+            azureHeaders.add(headerName, headerValue);
+//            System.out.println(headerName + ": " + headerValue);
+        });
+
+//        okHttpHeaders.forEach(nameValuePair -> azureHeaders.add(nameValuePair.getFirst(), nameValuePair.getSecond()));
 
         return azureHeaders;
     }
